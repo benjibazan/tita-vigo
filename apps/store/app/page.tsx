@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { CategoryCircles } from '@/components/products/CategoryCircles';
 import { ProductGrid } from '@/components/products/ProductGrid';
-import { getProducts, getCategories } from '@/lib/api';
+import { getProducts, getCategories, Product, Category } from '@/lib/api';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function HomePage() {
-    let products = [];
-    let categories = [];
+    let products: Product[] = [];
+    let categories: Category[] = [];
+
 
     try {
         const [productsRes, categoriesRes] = await Promise.all([
