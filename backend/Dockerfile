@@ -1,11 +1,10 @@
-# Build stage
-FROM node:18-alpine AS builder
+# Single stage Dockerfile for debugging
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY prisma ./prisma/
+# Copy all files
+COPY . .
 
 # Install dependencies
 RUN npm install
@@ -13,34 +12,17 @@ RUN npm install
 # Generate Prisma client
 RUN npx prisma generate
 
-# Copy source code
-COPY . .
-
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS runner
-
-WORKDIR /app
-
-# Copy package files and install production dependencies
-COPY package*.json ./
-RUN npm install --omit=dev
-
-# Copy Prisma schema and generate client
-COPY prisma ./prisma/
-RUN npx prisma generate
-
-# Copy built application
-COPY --from=builder /app/dist ./dist
-
-# Expose port
-EXPOSE 3001
+# List dist directory for debugging
+RUN ls -la dist/ || echo "dist directory not found"
 
 # Set environment
 ENV NODE_ENV=production
 
-# Start the application
-CMD ["node", "dist/main"]
+# Expose port
+EXPOSE 3001
 
+# Start the application
+CMD ["node", "dist/main.js"]
