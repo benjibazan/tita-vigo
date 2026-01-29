@@ -1,0 +1,21 @@
+{
+  "name": "tita-vigo3",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E-commerce de joyas - Tita Vigo",
+  "workspaces": [
+    "apps/*",
+    "backend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:store": "npm run dev --workspace=apps/store",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:backend": "npm run start:dev --workspace=backend",
+    "build:all": "npm run build --workspaces",
+    "lint:all": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

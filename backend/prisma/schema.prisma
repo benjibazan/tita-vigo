@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  
+  products  Product[]
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  description String?       @db.Text
+  price       Decimal       @db.Decimal(10, 2)
+  slug        String        @unique
+  sku         String?
+  stock       Int           @default(0)
+  status      ProductStatus @default(ACTIVE)
+  isPreOrder  Boolean       @default(false)
+  
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id])
+  
+  images      ProductImage[]
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([slug])
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  publicId  String?  // Cloudinary public ID
+  order     Int      @default(0)
+  
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
