@@ -8,7 +8,7 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -26,7 +26,7 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copy Prisma schema and generate client
 COPY prisma ./prisma/
@@ -43,3 +43,4 @@ ENV NODE_ENV=production
 
 # Start the application
 CMD ["node", "dist/main"]
+
